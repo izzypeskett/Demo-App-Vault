@@ -1,0 +1,87 @@
+@import "../node_modules/@meeco/style-kit/main.scss";
+
+html,
+body {
+  margin: 0px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 0.3fr 0.7fr;
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: $meeco-red;
+    box-shadow: $shadow-hard;
+    color: #fff;
+    > div {
+      margin: $grid * 2;
+    }
+    #signup,
+    #welcome,
+    #log-sidebar,
+    #itemShow {
+      display: none;
+    }
+
+    #loading {
+      text-align: center;
+    }
+
+    #welcome {
+      margin: $grid * 4;
+    }
+    textarea {
+      min-width: 320px;
+      min-height: 80px;
+      margin: $grid * 2 0px;
+      padding: $grid;
+      background-color: #fff;
+      border-radius: $border-radius-standard;
+      border: 3px solid #fff;
+      box-shadow: $shadow-hard;
+      color: map-get($meeco-theme, "dark");
+      font-size: 18px;
+    }
+  }
+  .dashboard {
+    height: 100vh;
+    margin: 16px;
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      padding: $grid;
+      border-bottom: 1px solid map-get($meeco-theme, "primary");
+    }
+    #itemForm {
+      display: none;
+    }
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: $border-radius-standard;
+      background-color: $meeco-dark-blue;
+      text-align: center;
+      font-size: 22px;
+      color: #fff;
+      line-height: 48px;
+    }
+    .card-list {
+      display: flex;
+      flex-wrap: wrap;
+      > div {
+        margin: $grid * 2;
+      }
+      .card {
+        min-width: 280px;
+      }
+    }
+  }
+  #dashboard,
+  #categories {
+    display: none;
+  }
+}

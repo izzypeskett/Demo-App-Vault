@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+  <head>
+    <title>index</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/node_modules/@meeco/style-kit/dist/main.css">
+    <script src="https://kit.fontawesome.com/4eb9ec9187.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div>
+          <h1>Digital Twin</h1>
+          <p class="medium">Save, store & share your personal data</p>
+        </div>
+        <div id="loading"></div>
+
+        <div id="login">
+          <button class="secondary large" id="createAccount">Create new account</button><br/>
+          <button class="text-only large" id="getAccount">Login to account</button>
+        </div>
+
+        <div id="signup">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" autocomplete="off" placeholder="Amee1234"/>
+          <label for="secret">Master Password<span class="small"> (Remember this!)</span></label>
+          <input type="text" name="passphrase" autocomplete="off"
+          id="passphrase" placeholder="Master Password"/>
+          <button class="secondary large" id="generate">Generate Secret</button>
+        </div>
+
+        <div id="welcome">
+          <p class="large">Welcome <span id="custom-name"></span>,</p>
+          <p class="medium">Below is your secret.</p>
+          <p class="medium">Write it down, or save it as you will need it to login again</p><br/>
+          <p class="large">Generated Secret:</p>
+          <textarea id="secret-block"></textarea>
+        </div>
+      </div>
+      
+      <div class="dashboard" id="dashboard">
+        <div class="toolbar">
+          <h3>Digital Me</h3>
+          <button class="primary large" id="addItem">Add item</button>
+        </div>
+
+        <div id="item-list">
+          <h2>Your items</h2>
+          <div class="card-list">
+          </div>
+        </div>
+
+        <div id="item-show">
+          <h4 id="item-label"></h4>
+          <span class="tag" id="tag"></span>
+        </div>
+
+        <div id="itemForm">
+          <h2>Create a card</h2>
+            <div id="form-space"></div>
+            <button class="primary large" id="createCard">Create Card</button>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>
