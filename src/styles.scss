@@ -20,6 +20,9 @@ body {
     > div {
       margin: $grid * 2;
     }
+    #login {
+      display: inline-block;
+    }
     #signup,
     #welcome,
     #log-sidebar,

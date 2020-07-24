@@ -7,6 +7,8 @@ import {
   SecretService,
   UserService,
   TemplatesService,
+  ITemplateData,
+  IItemRequestData,
 } from "@meeco/sdk";
 
 import {
@@ -70,19 +72,25 @@ const $get = (id: string) => ($(id) as HTMLInputElement)?.value;
 
 configureFetch(window.fetch);
 
-$("createAccount").addEventListener("click", createAccount);
+$("createAccount").addEventListener("click", () => {
+  hideElement(login);
+  showElement(signup);
+});
 $("generate").addEventListener("click", getUsername);
 $("getAccount").addEventListener("click", fetchUserData);
+$("getItems").addEventListener("click", displayAllItems);
 $("addItem").addEventListener("click", showItemForm);
 $("createCard").addEventListener("click", createItem);
 
-function createAccount() {
-  login.style.display = "none";
-  signup.style.display = "inline-block";
+function hideElement(element: any) {
+  element.style.display = "none";
+}
+
+function showElement(element: any) {
+  element.style.display = "inline-block";
 }
 
 async function getUsername() {
-  button.classList.add("loading");
   try {
     const username = await new UserService(environment, log).generateUsername();
     getSecret(username);
@@ -108,41 +116,37 @@ async function createUser(secret: string) {
       secret
     );
     STATE.user = user;
-    await successMessage();
+    await showSecret();
   } catch (error) {
     console.log(error);
   }
 }
 
-async function successMessage() {
-  signup.style.display = "none";
-  showSecret();
-}
-
 async function showSecret() {
+  hideElement(signup);
   $("secret-block").textContent = STATE.user.secret;
-  welcome.style.display = "inline-block";
+  showElement(welcome);
 }
 
 async function fetchUserData() {
-  login.style.display = "none";
+  hideElement(login);
   try {
     const user = await new UserService(environment, log).get(
       BOB_PASSWORD,
       BOB_SECRET
     );
     STATE.user = user;
-    dashboard.style.display = "inline-block";
-    await getItems();
+    showElement(dashboard);
+    await getAllItems();
   } catch (error) {
     console.log(error);
   }
 }
 
 function showItemForm() {
-  itemList.style.display = "none";
-  itemShow.style.display = "none";
-  itemForm.style.display = "inline-block";
+  hideElement(itemList);
+  hideElement(itemShow);
+  showElement(itemForm);
   itemSpace.innerHTML = `
   <h4>Item Details</h4>
     <input type="text" name="input-label" id="item-title" placeholder="Item Name"/><br/>
@@ -182,27 +186,26 @@ async function createItem() {
       STATE.user.data_encryption_key,
       config
     );
-    await getItems();
+    await getAllItems();
   } catch (error) {
     console.log(error.body);
     console.log(error);
   }
 }
 
-async function getItems() {
+async function getAllItems() {
   loading.innerHTML = `
     <h4> Hey Twin,</h4>
     <p class="large">Welcome back!<br/>Let's add or share some more items</p>
   `;
   dashboard.style.justifyContent = "flex-start";
-  itemForm.style.display = "none";
-  itemList.style.display = "inline-block";
+  hideElement(itemForm);
   try {
     const items = await new ItemService(environment, log).list(
       STATE.user.vault_access_token
     );
     STATE.items = items.items;
-    displayItems(items.items);
+    displayAllItems();
   } catch (error) {
     console.log(error);
   }
@@ -217,9 +220,11 @@ async function getItem(id: any) {
   displayItem(item);
 }
 
-function displayItems(items: any) {
+function displayAllItems() {
+  showElement(itemList);
+  hideElement(itemShow);
   cardList.innerHTML = "";
-  items.forEach((item) => {
+  STATE.items.forEach((item) => {
     const card = document.createElement("div");
     card.className = "card";
     card.setAttribute("id", `${item.label}`);
@@ -235,13 +240,14 @@ function displayItems(items: any) {
   });
 }
 
-async function displayItem(item) {
-  console.log(item);
-  itemList.style.display = "none";
+function displayItem(item: any) {
+  hideElement(itemList);
+  showElement(itemShow);
   $("item-label").innerHTML = item.item.label;
+  $("item-detail").innerHTML = "";
   item.slots.forEach((slot) => {
     if (slot.creator === "user") {
-      itemShow.innerHTML += `
+      $("item-detail").innerHTML += `
       <p class="label">${slot.label}</p>
       <p class="text-value">${slot.value}</p><br/>`;
     }
@@ -252,7 +258,6 @@ async function displayItem(item) {
 }
 
 function showItemDetail(label: string) {
-  console.log("clicked on card");
   STATE.items.forEach((item) => {
     if (item.label === label) {
       getItem(item.id);
