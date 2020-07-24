@@ -9,21 +9,26 @@ import {
   TemplatesService,
 } from "@meeco/sdk";
 
+import {
+  VAULT_URL,
+  KEYSTORE_URL,
+  SUB_KEY,
+  BOB_PASSWORD,
+  BOB_SECRET,
+  $,
+  loading,
+  login,
+  signup,
+  welcome,
+  button,
+  dashboard,
+  itemList,
+  itemForm,
+  itemSpace,
+  cardList,
+  itemShow,
+} from "./constants";
 import "./styles.scss";
-
-const VAULT_URL = "https://sandbox.meeco.me/vault";
-const KEYSTORE_URL = "https://sandbox.meeco.me/keystore";
-const SUB_KEY = "38181f4cda584b0bb5a18418c94ceabc";
-const BOB_SECRET =
-  "1.ypkDV9.EmkyLn-X5bBgp-b6P2au-Zwk8xC-SMkemN-Tf9WN5-dogfE8-AU";
-const BOB_PASSWORD = "covid123456789";
-
-const $ = (id) => document.getElementById(id);
-const $get = (id: string) => ($(id) as HTMLInputElement)?.value;
-const $set = (id: string, value: string) =>
-  (($(id) as HTMLInputElement).value = value);
-let loadingInterval = null;
-let counter = 0;
 
 let environment: Environment;
 
@@ -41,7 +46,6 @@ environment = new Environment({
 
 const STATE: {
   user?: AuthData;
-  identity?: string;
   items?: any;
 } = {
   user: {
@@ -61,6 +65,9 @@ const STATE: {
   },
 };
 
+const secretService = new SecretService();
+const $get = (id: string) => ($(id) as HTMLInputElement)?.value;
+
 configureFetch(window.fetch);
 
 $("createAccount").addEventListener("click", createAccount);
@@ -68,26 +75,6 @@ $("generate").addEventListener("click", getUsername);
 $("getAccount").addEventListener("click", fetchUserData);
 $("addItem").addEventListener("click", showItemForm);
 $("createCard").addEventListener("click", createItem);
-
-const secretService = new SecretService();
-const templateService = new TemplatesService(
-  environment,
-  STATE.user.vault_access_token
-);
-const availableTemplates = templateService.listTemplates();
-
-const loading = $("loading");
-const login = $("login");
-const signup = $("signup");
-const welcome = $("welcome");
-const button = $("generate");
-const customName = $("custom-name");
-const dashboard = $("dashboard");
-const itemList = $("item-list");
-const itemForm = $("itemForm");
-const itemSpace = $("form-space");
-const cardList = document.querySelector(".card-list");
-const itemShow = $("item-show");
 
 function createAccount() {
   login.style.display = "none";
@@ -115,15 +102,12 @@ async function getSecret(username: string) {
 
 async function createUser(secret: string) {
   const passphrase = $get("passphrase");
-  const name = $get("username");
   try {
     const user = await new UserService(environment, log).create(
       passphrase,
       secret
     );
     STATE.user = user;
-    STATE.identity = name;
-    console.log(STATE.user);
     await successMessage();
   } catch (error) {
     console.log(error);
@@ -136,7 +120,6 @@ async function successMessage() {
 }
 
 async function showSecret() {
-  customName.innerHTML = STATE.identity;
   $("secret-block").textContent = STATE.user.secret;
   welcome.style.display = "inline-block";
 }
