@@ -1,66 +1,77 @@
-@import "../node_modules/@meeco/style-kit/main.scss";
+@import "@meeco/style-kit";
+
+@mixin center-align {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin toolbar {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid map-get($meeco-theme, "primary");
+}
 
 html,
 body {
   margin: 0px;
+  font-synthesis: none;
+  -moz-font-feature-settings: "kern";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
   display: grid;
-  grid-template-columns: 0.3fr 0.7fr;
+  grid-template-columns: auto 0.5fr 0.5fr;
+  button {
+    outline: none;
+  }
   .sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: $meeco-red;
-    box-shadow: $shadow-hard;
-    color: #fff;
+    @include center-align;
+    min-height: 100vh;
+    height: auto;
+    padding: $grid * 2;
+    background-color: $meeco-smoke;
+    box-shadow: 2px 0px 4px 0px rgba(179, 179, 179, 1);
+    color: map-get($meeco-theme, "dark");
     > div {
       margin: $grid * 2;
     }
-    #login {
-      display: inline-block;
-    }
-    #signup,
-    #welcome,
-    #log-sidebar,
-    #itemShow {
-      display: none;
-    }
-
-    #loading {
-      text-align: center;
-    }
-
-    #welcome {
-      margin: $grid * 4;
-    }
-    textarea {
-      min-width: 320px;
-      min-height: 80px;
-      margin: $grid * 2 0px;
-      padding: $grid;
-      background-color: #fff;
-      border-radius: $border-radius-standard;
-      border: 3px solid #fff;
-      box-shadow: $shadow-hard;
-      color: map-get($meeco-theme, "dark");
-      font-size: 18px;
+    .content {
+      margin: $grid * 2;
+      button.text {
+        color: map-get($meeco-theme, "dark");
+      }
+      div {
+        @include center-align;
+      }
+      #signup,
+      #welcome {
+        display: none;
+      }
+      textarea {
+        min-width: 320px;
+        min-height: 80px;
+        margin: $grid * 2 0px;
+        padding: $grid;
+        background-color: #fff;
+        border-radius: $border-radius-standard;
+        border: 3px solid #fff;
+        box-shadow: $shadow-hard;
+        color: map-get($meeco-theme, "dark");
+        font-size: 18px;
+      }
     }
   }
+
   .dashboard {
-    height: 100vh;
-    margin: 16px;
+    height: auto;
+    padding: $grid * 2;
+    box-shadow: 2px 0px 4px 0px rgba(179, 179, 179, 1);
     .toolbar {
-      display: flex;
-      justify-content: space-between;
-      padding: $grid;
-      border-bottom: 1px solid map-get($meeco-theme, "primary");
-    }
-    #itemForm {
-      display: none;
+      @include toolbar;
     }
     .icon {
       width: 48px;
@@ -72,19 +83,57 @@ body {
       color: #fff;
       line-height: 48px;
     }
-    .card-list {
+    .card-list,
+    #template {
       display: flex;
       flex-wrap: wrap;
       > div {
         margin: $grid * 2;
       }
       .card {
-        min-width: 280px;
+        width: 100%;
+        cursor: pointer;
+      }
+      .tile {
+        width: 200px;
+        justify-content: center;
+        align-items: center;
+        .content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          .icon {
+            align-self: center;
+            width: 60px;
+            height: 60px;
+          }
+        }
       }
     }
   }
+
+  .active {
+    padding: $grid * 2;
+    .toolbar {
+      @include toolbar;
+      border-bottom: 0px;
+      button {
+        background-color: map-get($meeco-theme, "light");
+        i {
+          font-size: 16px;
+          color: map-get($meeco-theme, "dark");
+        }
+      }
+    }
+  }
+
+  .active,
   #dashboard,
-  #categories {
+  #item-templates,
+  #itemShow,
+  #itemForm,
+  #item-template {
     display: none;
   }
 }

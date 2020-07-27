@@ -3,12 +3,11 @@ import {
   configureFetch,
   EncryptionKey,
   Environment,
+  TemplatesService,
   ItemService,
   SecretService,
   UserService,
-  TemplatesService,
-  ITemplateData,
-  IItemRequestData,
+  vaultAPIFactory,
 } from "@meeco/sdk";
 
 import {
@@ -18,18 +17,23 @@ import {
   BOB_PASSWORD,
   BOB_SECRET,
   $,
+  $get,
   loading,
   login,
   signup,
   welcome,
-  button,
   dashboard,
   itemList,
   itemForm,
   itemSpace,
+  itemTemplate,
   cardList,
   itemShow,
+  header,
+  sidebar,
+  active,
 } from "./constants";
+
 import "./styles.scss";
 
 let environment: Environment;
@@ -48,6 +52,7 @@ environment = new Environment({
 
 const STATE: {
   user?: AuthData;
+  templates?: any;
   items?: any;
 } = {
   user: {
@@ -68,7 +73,6 @@ const STATE: {
 };
 
 const secretService = new SecretService();
-const $get = (id: string) => ($(id) as HTMLInputElement)?.value;
 
 configureFetch(window.fetch);
 
@@ -79,7 +83,7 @@ $("createAccount").addEventListener("click", () => {
 $("generate").addEventListener("click", getUsername);
 $("getAccount").addEventListener("click", fetchUserData);
 $("getItems").addEventListener("click", displayAllItems);
-$("addItem").addEventListener("click", showItemForm);
+$("addItem").addEventListener("click", getTemplates);
 $("createCard").addEventListener("click", createItem);
 
 function hideElement(element: any) {
@@ -116,15 +120,15 @@ async function createUser(secret: string) {
       secret
     );
     STATE.user = user;
-    await showSecret();
+    showSecret();
   } catch (error) {
     console.log(error);
   }
 }
 
-async function showSecret() {
-  hideElement(signup);
+function showSecret() {
   $("secret-block").textContent = STATE.user.secret;
+  hideElement(signup);
   showElement(welcome);
 }
 
@@ -136,25 +140,77 @@ async function fetchUserData() {
       BOB_SECRET
     );
     STATE.user = user;
+    console.log(user);
     showElement(dashboard);
+    hideElement(header);
     await getAllItems();
   } catch (error) {
     console.log(error);
   }
 }
 
-function showItemForm() {
+async function getTemplates() {
+  try {
+    const service = vaultAPIFactory(environment)(STATE.user.vault_access_token)
+      .ItemTemplateApi;
+    const templates = await service.itemTemplatesGet(
+      "esafe",
+      "esafe_templates"
+    );
+    STATE.templates = templates;
+    showTemplates();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function showTemplates() {
+  hideElement(itemList);
+  hideElement(itemShow);
+  showElement(itemTemplate);
+  const container = $("template");
+  STATE.templates.item_templates.forEach((item: any) => {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    tile.setAttribute("id", item.label);
+    tile.innerHTML = `
+      <div class="content">
+        <div class="icon"></div
+        <p class="card-label">${item.label}</p>
+      </div>
+    `;
+    container.appendChild(tile);
+    $(item.label).addEventListener("click", () => {
+      getTemplate(item.label);
+    });
+  });
+}
+
+function getTemplate(label) {
+  STATE.templates.item_templates.forEach(async (template) => {
+    if (template.label === label) {
+      const service = vaultAPIFactory(environment)(
+        STATE.user.vault_access_token
+      ).ItemTemplateApi;
+      const iTemplate = await service.itemTemplatesIdGet(template.id);
+      showItemForm(iTemplate);
+    }
+  });
+}
+
+function showItemForm(template) {
+  console.log(template);
+  hideElement(itemTemplate);
   hideElement(itemList);
   hideElement(itemShow);
   showElement(itemForm);
   itemSpace.innerHTML = `
-  <h4>Item Details</h4>
-    <input type="text" name="input-label" id="item-title" placeholder="Item Name"/><br/>
-    <input type="text" name="slot-1-label" id="slot-1-label" placeholder="Label">
-    <input type="text" name="slot-1-value" id="slot-1-value" placeholder="Value"/><br/>
-    <input type="text" id="slot-2-label" name="slot-2-label" placeholder="Label">
-    <input type="text" name="slot-2-value" id="slot-2-value" placeholder="Value"/><br />
-    `;
+  <h4>${template.item_template.label}</h4>`;
+  template.slots.forEach((slot) => {
+    itemSpace.innerHTML += `
+    <label for="${slot.label}">${slot.label}</label>
+    <input name="${slot.label}" type="text"/>`;
+  });
 }
 
 async function createItem() {
@@ -179,7 +235,6 @@ async function createItem() {
       },
     ],
   };
-  console.log(config);
   try {
     const item = await new ItemService(environment, log).create(
       STATE.user.vault_access_token,
@@ -188,7 +243,6 @@ async function createItem() {
     );
     await getAllItems();
   } catch (error) {
-    console.log(error.body);
     console.log(error);
   }
 }
@@ -198,7 +252,7 @@ async function getAllItems() {
     <h4> Hey Twin,</h4>
     <p class="large">Welcome back!<br/>Let's add or share some more items</p>
   `;
-  dashboard.style.justifyContent = "flex-start";
+  sidebar.style.justifyContent = "flex-start";
   hideElement(itemForm);
   try {
     const items = await new ItemService(environment, log).list(
@@ -211,18 +265,10 @@ async function getAllItems() {
   }
 }
 
-async function getItem(id: any) {
-  const item = await new ItemService(environment, log).get(
-    id,
-    STATE.user.vault_access_token,
-    STATE.user.data_encryption_key
-  );
-  displayItem(item);
-}
-
 function displayAllItems() {
   showElement(itemList);
   hideElement(itemShow);
+  hideElement(itemForm);
   cardList.innerHTML = "";
   STATE.items.forEach((item) => {
     const card = document.createElement("div");
@@ -240,8 +286,18 @@ function displayAllItems() {
   });
 }
 
+async function getItem(id: string) {
+  const item = await new ItemService(environment, log).get(
+    id,
+    STATE.user.vault_access_token,
+    STATE.user.data_encryption_key
+  );
+  displayItem(item);
+}
+
 function displayItem(item: any) {
-  hideElement(itemList);
+  showElement(active);
+  hideElement(itemForm);
   showElement(itemShow);
   $("item-label").innerHTML = item.item.label;
   $("item-detail").innerHTML = "";
@@ -251,9 +307,9 @@ function displayItem(item: any) {
       <p class="label">${slot.label}</p>
       <p class="text-value">${slot.value}</p><br/>`;
     }
-    if (slot.label === "tags") {
-      $("tag").innerHTML = slot.value;
-    }
+  });
+  $("delete").addEventListener("click", () => {
+    deleteItem(item.item);
   });
 }
 
@@ -263,6 +319,16 @@ function showItemDetail(label: string) {
       getItem(item.id);
     }
   });
+}
+
+async function deleteItem(item) {
+  const service = vaultAPIFactory(environment)(STATE.user.vault_access_token)
+    .ItemApi;
+  try {
+    const res = await service.itemsIdDelete(item.id);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function log(message: string) {
