@@ -24,7 +24,7 @@ import {
   welcome,
   dashboard,
   itemList,
-  itemForm,
+  itemFormContainer,
   itemSpace,
   itemTemplate,
   cardList,
@@ -35,6 +35,7 @@ import {
 } from "./constants";
 
 import "./styles.scss";
+import { Template } from "webpack";
 
 let environment: Environment;
 
@@ -54,6 +55,7 @@ const STATE: {
   user?: AuthData;
   templates?: any;
   items?: any;
+  template?: any;
 } = {
   user: {
     data_encryption_key: EncryptionKey.fromSerialized(
@@ -82,7 +84,6 @@ $("createAccount").addEventListener("click", () => {
 });
 $("generate").addEventListener("click", getUsername);
 $("getAccount").addEventListener("click", fetchUserData);
-$("getItems").addEventListener("click", displayAllItems);
 $("addItem").addEventListener("click", getTemplates);
 $("createCard").addEventListener("click", createItem);
 
@@ -165,25 +166,24 @@ async function getTemplates() {
 }
 
 function showTemplates() {
-  hideElement(itemList);
   hideElement(itemShow);
+  hideElement(itemFormContainer);
+  showElement(active);
   showElement(itemTemplate);
   const container = $("template");
+  const list = document.createElement("ul");
+  list.innerHTML = "";
   STATE.templates.item_templates.forEach((item: any) => {
-    const tile = document.createElement("div");
-    tile.className = "tile";
-    tile.setAttribute("id", item.label);
-    tile.innerHTML = `
-      <div class="content">
-        <div class="icon"></div
-        <p class="card-label">${item.label}</p>
-      </div>
-    `;
-    container.appendChild(tile);
-    $(item.label).addEventListener("click", () => {
-      getTemplate(item.label);
-    });
+    console.log(item.label);
+    list.innerHTML += `<li id="${item.label}">${item.label}</li></a>`;
   });
+  container.appendChild(list);
+  const listItems = list.getElementsByTagName("li");
+  for (let i = 0; i < listItems.length; i++) {
+    listItems[i].onclick = () => {
+      getTemplate(listItems[i].id);
+    };
+  }
 }
 
 function getTemplate(label) {
@@ -199,42 +199,35 @@ function getTemplate(label) {
 }
 
 function showItemForm(template) {
-  console.log(template);
+  STATE.template = template;
   hideElement(itemTemplate);
-  hideElement(itemList);
   hideElement(itemShow);
-  showElement(itemForm);
-  itemSpace.innerHTML = `
+  showElement(itemFormContainer);
+  const form = document.getElementById("item-form");
+  form.innerHTML = `
   <h4>${template.item_template.label}</h4>`;
   template.slots.forEach((slot) => {
-    itemSpace.innerHTML += `
+    form.innerHTML += `
     <label for="${slot.label}">${slot.label}</label>
-    <input name="${slot.label}" type="text"/>`;
+    <input id="${slot.name}" name="${slot.label}" type="text"/>`;
   });
 }
 
 async function createItem() {
-  const itemLabel = $get("item-title");
-  const label1 = $get("slot-1-label");
-  const label2 = $get("slot-2-label");
-  const value1 = $get("slot-1-value");
-  const value2 = $get("slot-2-value");
-  const config = {
-    template_name: "custom",
+  let config = {
+    template_name: STATE.template.item_template.name,
     item: {
-      label: itemLabel,
+      label: STATE.template.item_template.label,
     },
-    slots: [
-      {
-        name: label1,
-        value: value1,
-      },
-      {
-        name: label2,
-        value: value2,
-      },
-    ],
+    slots: [],
   };
+  STATE.template.slots.forEach((slot) => {
+    config.slots.push({
+      name: slot.name,
+      value: $get(slot.name),
+    });
+  });
+  console.log(config);
   try {
     const item = await new ItemService(environment, log).create(
       STATE.user.vault_access_token,
@@ -253,7 +246,7 @@ async function getAllItems() {
     <p class="large">Welcome back!<br/>Let's add or share some more items</p>
   `;
   sidebar.style.justifyContent = "flex-start";
-  hideElement(itemForm);
+  hideElement(itemFormContainer);
   try {
     const items = await new ItemService(environment, log).list(
       STATE.user.vault_access_token
@@ -268,7 +261,7 @@ async function getAllItems() {
 function displayAllItems() {
   showElement(itemList);
   hideElement(itemShow);
-  hideElement(itemForm);
+  hideElement(itemFormContainer);
   cardList.innerHTML = "";
   STATE.items.forEach((item) => {
     const card = document.createElement("div");
@@ -297,16 +290,14 @@ async function getItem(id: string) {
 
 function displayItem(item: any) {
   showElement(active);
-  hideElement(itemForm);
+  hideElement(itemFormContainer);
   showElement(itemShow);
   $("item-label").innerHTML = item.item.label;
   $("item-detail").innerHTML = "";
   item.slots.forEach((slot) => {
-    if (slot.creator === "user") {
-      $("item-detail").innerHTML += `
+    $("item-detail").innerHTML += `
       <p class="label">${slot.label}</p>
       <p class="text-value">${slot.value}</p><br/>`;
-    }
   });
   $("delete").addEventListener("click", () => {
     deleteItem(item.item);

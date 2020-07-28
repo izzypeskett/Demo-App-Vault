@@ -94,22 +94,6 @@ body {
         width: 100%;
         cursor: pointer;
       }
-      .tile {
-        width: 200px;
-        justify-content: center;
-        align-items: center;
-        .content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          .icon {
-            align-self: center;
-            width: 60px;
-            height: 60px;
-          }
-        }
-      }
     }
   }
 
@@ -117,7 +101,7 @@ body {
     padding: $grid * 2;
     .toolbar {
       @include toolbar;
-      border-bottom: 0px;
+      border-bottom: 5px solid map-get($meeco-theme, "dark");
       button {
         background-color: map-get($meeco-theme, "light");
         i {
@@ -126,14 +110,27 @@ body {
         }
       }
     }
+    ul {
+      list-style: none;
+      li {
+        width: 380px;
+        margin-bottom: $grid * 4;
+        border-bottom: 1px solid map-get($meeco-theme, "light");
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      li:hover {
+        color: darken(map-get($meeco-theme, "primary"), 10%);
+      }
+    }
   }
 
   .active,
   #dashboard,
   #item-templates,
   #itemShow,
-  #itemForm,
-  #item-template {
+  #itemForm {
     display: none;
   }
 }
