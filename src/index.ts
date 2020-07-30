@@ -19,6 +19,7 @@ _.$("createAccount").addEventListener("click", () => {
   showElement(_.signup);
 });
 _.$("generate").addEventListener("click", userFactory.getUsername);
+_.$("new-user-login").addEventListener("click", itemFactory.getAllItems);
 _.$("getAccount").addEventListener("click", userFactory.fetchUserData);
 _.$("addItem").addEventListener("click", templateFactory.getTemplates);
 _.$("createCard").addEventListener("click", itemFactory.createItem);

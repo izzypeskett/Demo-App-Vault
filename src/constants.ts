@@ -20,6 +20,7 @@ export const itemSpace = $("form-space");
 export const itemTemplate = $("item-templates");
 export const loading = $("loading");
 export const login = $("login");
+export const loginInputs = $("login-input-fields");
 export const navbar = $("navbar");
 export const sidebar = $("sidebar");
 export const signup = $("signup");

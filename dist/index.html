@@ -23,25 +23,31 @@
           <div id="loading"></div>
           
           <div id="login">
-            <button class="primary large" id="getAccount">Login to account</button>
+            <div id="login-input-fields">
+              <label for="password">Password</label>
+              <input name="password" id="login-password" type="text"/>
+              <label for="secret">Secret</label>
+              <input name="secret" id="login-secret" type="text"/>
+            </div>
+              <button id="getAccount" class="primary large">Login to account</button>
+           
             <button class="text large" id="createAccount">Create new account</button>
           </div>
 
           <div id="signup">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" autocomplete="off" placeholder="Amee1234"/>
-            <label for="secret">Master Password<span class="small"> (Remember this!)</span></label>
-            <input type="text" name="passphrase" autocomplete="off"
-            id="passphrase" placeholder="Master Password"/>
-            <button class="secondary large" id="generate">Generate Secret</button>
+            <p>To create an account set a<br/> <b>Master Password</b></p><br/>
+            <input type="password" name="passphrase" autocomplete="off"
+            id="passphrase" placeholder="Master Password" required/>
+            <button class="primary large" id="generate">Generate Secret</button>
           </div>
 
           <div id="welcome">
-            <p class="large">Welcome <span id="custom-name"></span>,</p>
+            <p class="large">Welcome!</p>
             <p class="medium">Below is your secret.</p>
             <p class="medium">Write it down, or save it as you will need it to login again</p><br/>
             <p class="large">Generated Secret:</p>
             <textarea id="secret-block"></textarea>
+            <button class="primary large" id="new-user-login">Saved!</button>
           </div>
 
           <div id="navbar">

@@ -41,16 +41,20 @@ body {
     background-color: _tint($meeco-smoke, 75%);
     box-shadow: 2px 0px 4px 0px rgba(179, 179, 179, 1);
     color: map-get($meeco-theme, "dark");
-    > div {
-      margin: $grid * 2;
-    }
     .content {
       margin: $grid * 2;
+      @include center-align;
       button.text {
         color: map-get($meeco-theme, "dark");
       }
       div {
         @include center-align;
+      }
+      #login-input-fields {
+        align-items: flex-start;
+      }
+      #signup {
+        text-align: center;
       }
       #signup,
       #welcome,

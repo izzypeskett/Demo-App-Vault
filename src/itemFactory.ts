@@ -61,7 +61,11 @@ export async function createItem() {
 // Call the API to retrieve the items
 export async function getAllItems() {
   hideElement(_.loading);
+  hideElement(_.welcome);
+  hideElement(_.header);
   showElement(_.navbar);
+  showElement(_.itemList);
+  showElement(_.dashboard);
   _.sidebar.style.justifyContent = "flex-start";
   hideElement(_.itemFormContainer);
   try {

@@ -49,13 +49,14 @@ function showSecret() {
 
 export async function fetchUserData() {
   hideElement(_.login);
+  const passphrase = _.$get("login-password");
+  const secret = _.$get("login-secret");
   try {
     const user = await new UserService(environment, log).get(
-      _.BOB_PASSWORD,
-      _.BOB_SECRET
+      passphrase,
+      secret
     );
     STATE.user = user;
-    console.log(user);
     showElement(_.dashboard);
     hideElement(_.header);
     await itemFactory.getAllItems();
