@@ -1,4 +1,4 @@
-@import "@meeco/style-kit";
+@import "../node_modules/@meeco/style-kit/main.scss";
 
 @mixin center-align {
   display: flex;
@@ -13,6 +13,11 @@
   border-bottom: 1px solid map-get($meeco-theme, "primary");
 }
 
+@font-face {
+  font-family: "meeco-icons";
+  src: url("../node_modules/@meeco/style-kit/assets/meeco-icons.woff");
+}
+
 html,
 body {
   margin: 0px;
@@ -24,7 +29,7 @@ body {
 
 .container {
   display: grid;
-  grid-template-columns: auto 0.5fr 0.5fr;
+  grid-template-columns: auto calc(100vw * 0.375) calc(100vw * 0.375);
   button {
     outline: none;
   }
@@ -33,7 +38,7 @@ body {
     min-height: 100vh;
     height: auto;
     padding: $grid * 2;
-    background-color: $meeco-smoke;
+    background-color: _tint($meeco-smoke, 75%);
     box-shadow: 2px 0px 4px 0px rgba(179, 179, 179, 1);
     color: map-get($meeco-theme, "dark");
     > div {
@@ -48,7 +53,8 @@ body {
         @include center-align;
       }
       #signup,
-      #welcome {
+      #welcome,
+      #navbar {
         display: none;
       }
       textarea {
@@ -62,6 +68,16 @@ body {
         box-shadow: $shadow-hard;
         color: map-get($meeco-theme, "dark");
         font-size: 18px;
+      }
+      #navbar {
+        ul {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          li {
+            margin-bottom: $grid * 4;
+          }
+        }
       }
     }
   }
@@ -87,11 +103,11 @@ body {
     #template {
       display: flex;
       flex-wrap: wrap;
-      > div {
-        margin: $grid * 2;
-      }
+      width: calc(100vw * 0.35);
+      padding: $grid $grid * 2;
       .card {
         width: 100%;
+        margin: $grid $grid * 2;
         cursor: pointer;
       }
     }
@@ -99,17 +115,6 @@ body {
 
   .active {
     padding: $grid * 2;
-    .toolbar {
-      @include toolbar;
-      border-bottom: 5px solid map-get($meeco-theme, "dark");
-      button {
-        background-color: map-get($meeco-theme, "light");
-        i {
-          font-size: 16px;
-          color: map-get($meeco-theme, "dark");
-        }
-      }
-    }
     ul {
       list-style: none;
       li {
@@ -123,6 +128,22 @@ body {
       li:hover {
         color: darken(map-get($meeco-theme, "primary"), 10%);
       }
+    }
+    form {
+      width: 400px;
+    }
+    .card {
+      width: calc(100vw * 0.35);
+      &.no-shadow {
+        box-shadow: none;
+        .footer {
+          border-top: 0px;
+          border-bottom: 1px solid map-get($meeco-theme, "light");
+        }
+      }
+    }
+    #item-detail {
+      margin: $grid * 2;
     }
   }
 

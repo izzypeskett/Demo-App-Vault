@@ -10,13 +10,18 @@
 
   <body>
     <div class="container">
+
       <div class="sidebar" id="sidebar">
+        
         <div id="header">
           <h1>Digital Twin</h1>
           <p class="medium">Save, store & share your personal data</p>
         </div>
+        
         <div class="content">
+          
           <div id="loading"></div>
+          
           <div id="login">
             <button class="primary large" id="getAccount">Login to account</button>
             <button class="text large" id="createAccount">Create new account</button>
@@ -38,17 +43,28 @@
             <p class="large">Generated Secret:</p>
             <textarea id="secret-block"></textarea>
           </div>
+
+          <div id="navbar">
+            <ul>
+              <li><b>Vault</b></li>
+              <li>Notifications</li>
+              <li>Contacts</li>
+              <li>Settings</li>
+            </ul>
+          </div>
+
         </div>
+
       </div>
 
       <div class="dashboard" id="dashboard">
         <div class="toolbar">
-          <h3>Digital Me</h3>
-          <button class="primary large" id="addItem">Add item</button>
+          <h3>Vault</h3>
+          <button class="icon-only" id="addItem"><i>add</i></button>
         </div>
 
         <div id="item-list">
-          <h2>Your items</h2>
+          <h2>My items</h2>
           <div class="card-list">
           </div>
         </div>
@@ -56,31 +72,31 @@
       </div>
 
       <div class="active">
-        <div class="toolbar">
-          <div></div>
-          <div></div>
-        </div>
-
+  
         <div id="item-templates">
-          <h4>Select Category</h4>
+          <h2>Select a template</h2>
           <div id="template"></div>
         </div>
 
         <div id="item-show">
-          <h4 id="item-label"></h4>
+          <div class="card no-shadow">
+            <div class="content">
+              <p class="card-label" id="item-heading"></p>
+            </div>
+            <div class="footer" id="tag-container"></div>
+          </div>
           <div id="item-detail"></div>
-          <button class="primary" id="delete">Delete</button>
+          <button class="icon-only" id="delete"><i>delete</i></button>
         </div>
 
         <div id="item-form-container">
-          <h2>Create a card</h2>
+          <h2>Create an item</h2>
             <div id="form-space">
-              <form id="item-form">
-
-              </form>
+              <form id="item-form"></form>
             </div>
-            <button class="primary large" id="createCard">Create Card</button>
+            <button class="primary large" id="createCard">Create Item</button>
         </div>
+
       </div>
     </div>
   </body>
